@@ -1,15 +1,37 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
+/*import { onMounted } from 'vue'
 
-const state = reactive({ 
-    cartaActiva: -1,
-    cartas:[{id:0, activa: false, img:"una.png", nVertices:[3] },
+onMounted(() => {
+  state.cartaActiva=-1;
+  state.cartas=[Carta{id:0, activa: false, img:"una.png", nVertices:[3] },
             {id:1, activa: false, img:"dos.png", nVertices:[3] },
             {id:2, activa: false , img:"tres.png", nVertices:[3] },
             {id:3, activa: false , img:"cuatro.png", nVertices:[3] },
             {id:4, activa: false , img:"cinco.png", nVertices:[3] }]
-    })
+    });*/
 
+
+ interface Carta {
+    id: number,
+    activa: boolean,
+    img: string,
+    nVertices: number[]
+  }
+
+   interface Mazo{
+    cartaActiva: number,
+    cartas: Carta[]
+  }
+
+const state : Mazo = reactive({ 
+    cartaActiva:     -1,
+    cartas: [{id:0, activa: false, img:"una.png", nVertices:[3] },
+            {id:1, activa: false, img:"dos.png", nVertices:[3] },
+            {id:2, activa: false , img:"tres.png", nVertices:[3] },
+            {id:3, activa: false , img:"cuatro.png", nVertices:[3] },
+            {id:4, activa: false , img:"cinco.png", nVertices:[3] }]
+});
   
   function volteaCarta(id : number){
       if (state.cartaActiva===(id-1)) {
