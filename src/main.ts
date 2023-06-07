@@ -10,8 +10,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-
-
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'

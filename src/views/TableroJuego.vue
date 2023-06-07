@@ -49,6 +49,9 @@ const state : Mazo = reactive({
     <h3>
       Bienvenido a la Morada Maldita
     </h3>
+    <v-btn>
+  Button
+</v-btn>
     <span v-bind:key="carta.id" v-for="carta in state.cartas">
         <img @click="volteaCarta(carta.id)" class="carta" :src="carta.activa ? carta.img : 'back.png'" alt="">
     </span>
