@@ -1,7 +1,7 @@
 <template>
     <v-card>
       <v-tabs
-        v-model="tab"
+        v-model="state.tab"
         bg-color="primary"
       >
         <v-tab value="one">Item One</v-tab>
@@ -10,7 +10,7 @@
       </v-tabs>
   
       <v-card-text>
-        <v-window v-model="tab">
+        <v-window v-model="state.tab">
           <v-window-item value="one">
             One
           </v-window-item>
@@ -29,6 +29,9 @@
 
 <script setup lang="ts">
 
+import { reactive } from 'vue'
+
+const state = reactive({ tab: 0 })
 </script>
 
 <style scoped>
