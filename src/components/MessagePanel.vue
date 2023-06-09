@@ -17,35 +17,53 @@
       </li>
     </ul>
 
-    <form @submit.prevent="onSubmit" class="form">
-      <textarea v-model="input" placeholder="Your message..." class="input" />
-      <button :disabled="!isValid" class="send-button">Send</button>
-    </form>
+    <div class="form">
+      <textarea v-model="mensaje" placeholder="Your message..." class="input" />
+      <button :disabled="!isValid" @click="onSubmit" class="send-button">Send</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import StatusIcon from "./StatusIcon.vue";
 
-export default {
+
+interface Mensaje{
+    fromSelf: boolean,
+    content: string
+}
+
+interface Usuario{
+  userID: string,
+  hasNewMessages: boolean,
+  connected: boolean,
+  username: string,
+  messages: Mensaje[],
+  self: boolean
+}
+
+import { defineComponent } from 'vue'
+import type { PropType } from 'vue'
+
+export default defineComponent( {
   name: "MessagePanel",
   components: {
     StatusIcon,
-  },
-  props: {
-    user: Object,
+  }
+  , props: {
+    user: {type: Object as PropType<Usuario>, required: true},
   },
   data() {
     return {
-      input: "",
+      mensaje: "",
     };
   },
   methods: {
     onSubmit() {
-      this.$emit("input", this.input);
-      this.input = "";
+      this.$emit("envioMensaje", this.mensaje);
+      this.mensaje = "";
     },
-    displaySender(message: string, index: number) {
+    displaySender(message: Mensaje, index: number) {
       return (
         index === 0 ||
         this.user.messages[index - 1].fromSelf !==
@@ -55,10 +73,10 @@ export default {
   },
   computed: {
     isValid() {
-      return this.input.length > 0;
+      return this.mensaje.length > 0;
     },
   },
-};
+});
 </script>
 
 <style scoped>

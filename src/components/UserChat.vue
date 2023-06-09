@@ -12,13 +12,33 @@
   </div>
 </template>
 
+
 <script lang="ts">
+
+import  { defineComponent } from "vue";
 import StatusIcon from "./StatusIcon.vue";
-export default {
-  name: "User",
+import type { PropType } from 'vue'
+
+interface Mensaje{
+    fromSelf: boolean,
+    content: string
+}
+
+declare interface Usuario{
+  userID: string,
+  hasNewMessages: boolean,
+  connected: boolean,
+  username: string,
+  messages: Mensaje[],
+  self: boolean
+}
+
+
+export default defineComponent( {
+  name: "UserChat",
   components: { StatusIcon },
   props: {
-    user: Object,
+    user: {type: Object as PropType<Usuario>, required: true},
     selected: Boolean,
   },
   methods: {
@@ -31,7 +51,11 @@ export default {
       return this.user.connected ? "online" : "offline";
     },
   },
-};
+  mounted() {
+    this.user
+    this.selected 
+  }
+});
 </script>
 
 <style scoped>

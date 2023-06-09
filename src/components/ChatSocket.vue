@@ -12,7 +12,7 @@
     <message-panel
       v-if="selectedUser"
       :user="selectedUser"
-      @input="onMessage"
+      @envioMensaje="onMessage"
       class="right-panel"
     />
   </div>
@@ -20,20 +20,35 @@
 
 <script lang="ts">
 import socket from "../socket";
-import User from "./User.vue";
+import User from "./UserChat.vue";
 import MessagePanel from "./MessagePanel.vue";
+import  { defineComponent } from "vue";
 
-export default {
-  name: "Chat",
+interface Mensaje{
+    fromSelf: boolean,
+    content: string
+}
+
+declare interface Usuario{
+  userID: string,
+  hasNewMessages: boolean,
+  connected: boolean,
+  username: string,
+  messages: Mensaje[],
+  self: boolean
+}
+
+export default defineComponent({
+  name: "ChatSocket",
   components: { User, MessagePanel },
   data() {
     return {
-      selectedUser: null,
-      users: [],
+      selectedUser: {} as Usuario,
+      users:  [] as Usuario[],
     };
   },
   methods: {
-    onMessage(content: any) {
+    onMessage(content: string) {
       if (this.selectedUser) {
         socket.emit("private message", {
           content,
@@ -45,14 +60,14 @@ export default {
         });
       }
     },
-    onSelectUser(user: null) {
+    onSelectUser(user: Usuario) {
       this.selectedUser = user;
       user.hasNewMessages = false;
     },
   },
   created() {
     socket.on("connect", () => {
-      this.users.forEach((user) => {
+      this.users.forEach((user: Usuario) => {
         if (user.self) {
           user.connected = true;
         }
@@ -60,21 +75,21 @@ export default {
     });
 
     socket.on("disconnect", () => {
-      this.users.forEach((user) => {
+      this.users.forEach((user: Usuario) => {
         if (user.self) {
           user.connected = false;
         }
       });
     });
 
-    const initReactiveProperties = (user: { connected: boolean; messages: never[]; hasNewMessages: boolean; }) => {
+    const initReactiveProperties = (user: Usuario) => {
       user.connected = true;
       user.messages = [];
       user.hasNewMessages = false;
     };
 
-    socket.on("users", (users: { forEach: (arg0: (user: any) => void) => void; sort: (arg0: (a: any, b: any) => 1 | 0 | -1) => never[]; }) => {
-      users.forEach((user: { self: boolean; userID: any; }) => {
+    socket.on("users", (users: { forEach: (arg0: (user: Usuario) => void) => void; sort: (arg0: (a: any, b: any) => 1 | 0 | -1) => never[]; }) => {
+      users.forEach((user: Usuario) => {
         user.self = user.userID === socket.id;
         initReactiveProperties(user);
       });
@@ -87,12 +102,12 @@ export default {
       });
     });
 
-    socket.on("user connected", (user: any) => {
+    socket.on("user connected", (user: Usuario) => {
       initReactiveProperties(user);
       this.users.push(user);
     });
 
-    socket.on("user disconnected", (id: any) => {
+    socket.on("user disconnected", (id: string) => {
       for (let i = 0; i < this.users.length; i++) {
         const user = this.users[i];
         if (user.userID === id) {
@@ -118,7 +133,7 @@ export default {
       }
     });
   },
-  destroyed() {
+  unmounted() {
     socket.off("connect");
     socket.off("disconnect");
     socket.off("users");
@@ -126,12 +141,16 @@ export default {
     socket.off("user disconnected");
     socket.off("private message");
   },
-};
+  mounted() {
+    this.selectedUser // type: string | undefined
+    this.users// type: number | string | undefined
+  }
+});
 </script>
 
 <style scoped>
 .left-panel {
-  position: fixed;
+  /*position: fixed;*/
   left: 0;
   top: 0;
   bottom: 0;

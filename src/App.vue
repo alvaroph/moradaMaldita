@@ -11,7 +11,7 @@
     </div>
     <select-username
       v-if="!usernameAlreadySelected"
-      @input="onUsernameSelection"
+      @envioUsuario="onUsernameSelection"
     />
     <chat v-else />
   </header>
@@ -27,7 +27,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import BarraNavegacion from './components/BarraNavegacion.vue'
 
 import SelectUsername from './components/SelectUsername.vue'
-import Chat from "./components/Chat.vue";
+import Chat from "./components/ChatSocket.vue";
 import socket from "./socket";
 
 export default {
@@ -55,9 +55,9 @@ export default {
       }
     });
   },
-  destroyed() {
+ /* destroyed() {
     socket.off("connect_error");
-  },
+  },*/
 };
 </script>
 
