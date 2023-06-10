@@ -29,7 +29,7 @@ interface Mensaje{
     content: string
 }
 
-declare interface Usuario{
+ interface Usuario{
   userID: string,
   hasNewMessages: boolean,
   connected: boolean,

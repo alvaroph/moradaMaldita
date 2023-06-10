@@ -3,7 +3,7 @@
   <header>
 
     <div class="wrapper">      
-      <BarraNavegacion></BarraNavegacion>
+      <!--BarraNavegacion></!--BarraNavegacion-->
       <nav>
         <RouterLink to="/">Juego</RouterLink>
         <RouterLink to="/about">Sobre el juego</RouterLink>
@@ -46,6 +46,8 @@ export default {
       this.usernameAlreadySelected = true;
       socket.auth = { username };
       socket.connect();
+      console.log(socket);
+      
     },
   },
   unmounted() {
