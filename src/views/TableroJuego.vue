@@ -6,7 +6,13 @@ import { onMounted } from 'vue'
 onMounted(() => {
   socket.on("envioCartas", (data) => {
       console.log(data)
-      state.cartas=data.content;
+      state.cartas=data.content.cartas;
+      state.gemas=data.content.gemas;
+    });
+
+    socket.on("gemaRobada", (idGema) => {
+      console.log(idGema);
+      state.gemas[idGema].libre=false;
     });
   });
 
@@ -17,6 +23,7 @@ onMounted(() => {
     activa: boolean,
     img: string,
     nVertices: number[]
+    gemasCarta: Gema[]
   }
 
   interface Gema{
@@ -53,10 +60,15 @@ const state : Partida = reactive({
  
  }
 
- 
 
- function escogerGema(id: number){
-console.log(id)
+
+ function escogerGema(idCarta: number , idGema: number){
+    state.gemas[idGema].libre=false;
+    state.cartas[idCarta].gemasCarta.push(state.gemas[idGema]);
+    console.log(`Escojo la gema ${idGema} y la carta activa es la ${idCarta}`)
+    socket.emit("roboGema", {
+          gema: idGema
+        });
  }
 
 
@@ -66,23 +78,33 @@ console.log(id)
   <div class="greetings">
  
     <h3>
-      Bienvenido a la Morada Maldita
+      Bienvenido a la Morada Maldita 
     </h3>
 
     <span v-bind:key="gema.id" v-for="gema in state.gemas">
-        <img @click="escogerGema(gema.id)" class="carta" :src="gema.libre ? gema.img : '' " alt="">
+        <img @click="escogerGema(state.cartaActiva,gema.id)" class="gema" :src="gema.libre ? gema.img : '' " alt="">    
     </span>
-
+    <br>
     <v-btn @click="recibirCartas">
       Button
     </v-btn>
     <span v-bind:key="carta.id" v-for="carta in state.cartas">
         <img @click="volteaCarta(carta.num)" class="carta" :src="carta.activa ? carta.img : 'reverso.png' " alt="">
-    </span>
+        <span v-bind:key="miniGema.id" v-for="miniGema in carta.gemasCarta">
+          <img @click="volteaCarta(carta.num)" class="miniGema" :src="miniGema.img" alt="">
+        </span>
+      </span>
   </div>
 </template>
 <style>
 .carta{
   width: 100px;
+}
+
+.gema{
+  width: 50px;
+}
+.miniGema{
+  width: 25px;
 }
 </style>
